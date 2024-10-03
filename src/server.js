@@ -13,6 +13,7 @@ polka() // You can also use Express
 	.use(
 		compression({ threshold: 0 }),
 		json(),
+		sirv('static', { dev }),
 		session({
 			secret: 'dadadada', //suvaline EI tohi githubi panna
 			resave: true,
@@ -24,10 +25,10 @@ polka() // You can also use Express
 				path: `.sessions`
 			})
 		}),
-		sirv('static', { dev }),
 		sapper.middleware({
 			session: req => ({
-				user: req.session && req.session.user
+				user: req.session && req.session.user,
+				token: req.session && req.session.token
 			})
 		})
 	)
