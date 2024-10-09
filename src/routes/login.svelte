@@ -1,20 +1,29 @@
-<script>
-    import { goto, stores } from '@sapper/app';
-    import { post } from 'utils.js';
+<script context="module">
+    export async function preload({ params }, { token }) {
+        if (token) {
+            this.redirect(302, `/`);
+        }
+    }
+</script>
 
-    const { session } = stores();
+<script>
+    import {goto, stores} from '@sapper/app';
+    import {post} from 'utils.js';
+
+    const {session} = stores();
 
     let username = '';
     let password = '';
-    let errors = null;
+    let error = null;
 
     async function submit(event) {
-        const response = await post(`auth/login`, { username, password });
+        const response = await post(`auth/login`, {username, password});
 
         // TODO handle network errors
-        errors = response.errors;
-        console.log(response)
+        error = response.error;
+
         if (response.token) {
+            console.log(response)
             $session.token = response.token;
             goto('/');
         }
@@ -22,7 +31,7 @@
 </script>
 
 <svelte:head>
-    <title>Sign in • Conduit</title>
+    <title>Sign in • barBank</title>
 </svelte:head>
 
 <div class="auth-page">
@@ -34,12 +43,17 @@
                     <a href="/register">Need an account?</a>
                 </p>
 
+                {#if error}
+                    <div class="alert alert-danger" role="alert">{error}</div>
+                {/if}
                 <form on:submit|preventDefault={submit}>
                     <fieldset class="form-group">
-                        <input class="form-control form-control-lg" type="text" required placeholder="Username" bind:value={username}>
+                        <input class="form-control form-control-lg" type="text" required placeholder="Username"
+                               bind:value={username}>
                     </fieldset>
                     <fieldset class="form-group">
-                        <input class="form-control form-control-lg" type="password" required placeholder="Password" bind:value={password}>
+                        <input class="form-control form-control-lg" type="password" required placeholder="Password"
+                               bind:value={password}>
                     </fieldset>
                     <button class="btn btn-lg btn-primary pull-xs-right" type="submit">
                         Sign in
