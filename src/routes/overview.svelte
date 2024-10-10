@@ -35,7 +35,7 @@
         <section>
             <ul>
                 {#each my.accounts as account}
-                    <li>{account.number} (account.name)</li>
+                    <li>{account.number} {account.name}</li>
                 {/each}
             </ul>
         </section>
